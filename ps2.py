@@ -20,8 +20,12 @@ class Node:
 		self.entropy = getEntropy(self.data, self.attrs-1, 0.0)
 
 		# Calculate the best attribute to split on, and what value to split
-		self.attrIndex, self.median = findSplit(data, self.attrs)
+		self.attrIndex, self.split = findSplit(data, self.attrs)
 
+		if attributes[self.attrIndex] > 0:
+			self.numeric = False
+		else:
+			self.numeric = True
 
 class Leaf(Node):
 	def setProb(self, prob):
@@ -30,18 +34,18 @@ class Leaf(Node):
 def findSplit(data, attrs):
 	"""Find the most appropriate attribute to split on"""
 	values = [[None] for n in range(attrs)]
-	medians = [None]*attrs
+	splits = [None]*attrs
 	entropies = [0.0]*(attrs-1)
 	for i in range(attrs):
 		for point in data:
 			values[i].append(point[i])
-		medians[i] = median(values[i])
+		splits[i] = median(values[i])
 
 	for i in range(attrs-1):
 		set1 = []
 		set2 = []
 		for point in data:
-			if (point[i] > medians[i]):
+			if (point[i] > splits[i]):
 				set1.append(point)
 			else:
 				set2.append(point)
@@ -56,7 +60,7 @@ def findSplit(data, attrs):
 			entropies[i] = 10.0
 
 	index = entropies.index(min(entropies))
-	med = medians[index]
+	med = splits[index]
 
 	return index, med
 
@@ -105,7 +109,8 @@ def convertCSV(row):
 	data = [None]*len(row)
 	for i in range(len(row)):
 		if (row[i] == '?'):
-			data[i] = -100.0
+			#data[i] = -100.0
+			data[i] = 1.0
 		else:
 			data[i] = float(row[i])
 
@@ -117,38 +122,71 @@ def median(lst):
 	half = (len(lst) - 1) / 2
 	return sum(sorted(lst)[half:half + even]) / float(even)
 
-def learn(node, maxHeight):
+def learn(node, attrTypes, maxHeight):
 	"""Learn a decision tree"""
-	set1 = []
-	set2 = []
+	if node.numeric:
+		splitCount = 2
+	else:
+		splitCount = attrTypes[node.attrIndex]
+
+	sets = [[] for n in range(splitCount)]
 	for point in node.data:
-		if (point[node.attrIndex] > node.median):
-			set1.append(point)
+		if node.numeric:
+			if (point[node.attrIndex] > node.split):
+				sets[0].append(point)
+			else:
+				sets[1].append(point)
 		else:
-			set2.append(point)
+			if node.attrIndex == 2:
+				ind = int(point[node.attrIndex]) + 1
+				sets[ind].append(point)
+			elif node.attrIndex == 6 or node.attrIndex == 7:
+				ind = int(point[node.attrIndex]) - 1
+				sets[ind].append(point)
 
 	if node.height < maxHeight:
 		#print node.height
-		node.branches.append(Node(set1, node.height+1))
-		node.branches.append(Node(set2, node.height+1))
+		for i in range(splitCount):
+			node.branches.append(Node(sets[i], node.height+1))
 		for branch in node.branches:
-			learn(branch, maxHeight)
+			learn(branch, attrTypes, maxHeight)
 	else:
 		#print "Reached max height", maxHeight
-		node.branches.append(Leaf(set1, node.height+1))
-		node.branches.append(Leaf(set2, node.height+1))
+		#for i in range(splitCount):
+		node.branches.append(Leaf(node.data, node.height+1))
 		p = getRatio(node.data, node.attrs-1, 0.0)
 		node.branches[0].setProb(p)
-		node.branches[1].setProb(1.0-p)
+		#node.branches[1].setProb(1.0-p)
+
+def printTree(node):
+	if len(node.branches) > 0:
+		print "Height", node.height, ", splits at", node.attrIndex
+		print  len(node.branches), "branches"
+		for branch in node.branches:
+			printTree(branch)
+	else:
+		print "Leaf"
 
 def followTree(node, example):
 	"""For an example, follow the decision tree and predict the outcome"""
 	if len(node.branches) > 0:
-		val = example[node.attrIndex]
-		if val > node.median:
-			return followTree(node.branches[0], example)
+		if len(node.branches) > 1:
+			if node.numeric:
+				val = example[node.attrIndex]
+				if val > node.split:
+					return followTree(node.branches[0], example)
+				else:
+					return followTree(node.branches[1], example)
+			else:
+				if node.attrIndex == 2:
+					val = int(example[node.attrIndex]) + 1
+				elif node.attrIndex == 6 or node.attrIndex == 7:
+					val = int(example[node.attrIndex]) - 1
+				else:
+					val = int(example[node.attrIndex])
+				return followTree(node.branches[val], example)
 		else:
-			return followTree(node.branches[1], example)
+			return followTree(node.branches[0], example)
 	else:
 		rand = random.random()
 		if rand <= node.prob:
@@ -167,7 +205,7 @@ def makeTree(trainPath='btrain.csv', maxHeight=6):
 		dataPoints.append(convertCSV(row))
 
 	root = Node(dataPoints, 0)
-	learn(root, maxHeight)
+	learn(root, attributes, maxHeight)
 	print "Done!"
 	return root
 
@@ -181,7 +219,7 @@ def validate(trainPath='btrain.csv', validatePath='bvalidate.csv'):
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, 6)
+	learn(root, attributes, 6)
 	print "Decision tree learned!"
 
 	csv_validate = csv.reader(open(validatePath))
@@ -211,7 +249,7 @@ def predict(trainPath='btrain.csv', testPath='btrain.csv', outPath='result.csv')
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, 6)
+	learn(root, attributes, 6)
 	print "Decision tree learned!"
 
 	csv_test = csv.reader(open(testPath))
@@ -224,4 +262,9 @@ def predict(trainPath='btrain.csv', testPath='btrain.csv', outPath='result.csv')
 		point[len(point)-1] = followTree(root, point)
 	writer = csv.writer(open(outPath, 'w'))
 	writer.writerows(output)
-	print "Done!"
+	print "Done!"	
+
+# List of attribute types-
+# If the value is 0, the attribute is numeric
+# If the value is >0, the attribute is nominal
+attributes = [0, 0, 3, 0, 0, 0, 5, 5, 0, 0, 2, 0, 0, 2]

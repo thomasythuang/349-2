@@ -167,6 +167,17 @@ def printTree(node):
 	else:
 		print "Leaf"
 
+def gregsPrintTree(node):
+	if len(node.branches) > 0:
+		spacer = ""
+		for n in range(node.height):
+			spacer += "--"
+		print spacer, node.attrIndex
+		for branch in node.branches:
+			gregsPrintTree(branch)
+	else:
+		print node.prob
+
 def followTree(node, example):
 	"""For an example, follow the decision tree and predict the outcome"""
 	if len(node.branches) > 0:

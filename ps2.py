@@ -139,24 +139,33 @@ def learn(node, attrTypes, maxHeight):
 		else:
 			if node.attrIndex == 2:
 				ind = int(point[node.attrIndex]) + 1
-				sets[ind].append(point)
 			elif node.attrIndex == 6 or node.attrIndex == 7:
 				ind = int(point[node.attrIndex]) - 1
-				sets[ind].append(point)
+			else:
+				ind = int(point[node.attrIndex])
+			sets[ind].append(point)
+			if len(sets[ind]) < 5:
+				largeEnough = False
 
 	if node.height < maxHeight:
 		#print node.height
 		for i in range(splitCount):
+			if len(sets[i]) < 10:
+				makeLeaf(node)
+				return
 			node.branches.append(Node(sets[i], node.height+1))
 		for branch in node.branches:
 			learn(branch, attrTypes, maxHeight)
 	else:
 		#print "Reached max height", maxHeight
 		#for i in range(splitCount):
-		node.branches.append(Leaf(node.data, node.height+1))
-		p = getRatio(node.data, node.attrs-1, 0.0)
-		node.branches[0].setProb(p)
+		makeLeaf(node)
 		#node.branches[1].setProb(1.0-p)
+
+def makeLeaf(node):
+	node.branches.append(Leaf(node.data, node.height+1))
+	p = getRatio(node.data, node.attrs-1, 0.0)
+	node.branches[len(node.branches)-1].setProb(p)
 
 def printTree(node):
 	if len(node.branches) > 0:
@@ -234,7 +243,7 @@ def validate(trainPath='btrain.csv', validatePath='bvalidate.csv'):
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, 7)
+	learn(root, attributes, 8)
 	print "Decision tree learned!"
 
 	csv_validate = csv.reader(open(validatePath))

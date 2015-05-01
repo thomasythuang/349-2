@@ -194,7 +194,7 @@ def followTree(node, example):
 		else:
 			return 0.0
 
-def makeTree(trainPath='btrain.csv', maxHeight=6):
+def makeTree(trainPath='btrain.csv', maxHeight=7):
 	"""Generates a decision tree based on the training set"""
 
 	csv_train = csv.reader(open(trainPath))
@@ -219,7 +219,7 @@ def validate(trainPath='btrain.csv', validatePath='bvalidate.csv'):
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, 6)
+	learn(root, attributes, 7)
 	print "Decision tree learned!"
 
 	csv_validate = csv.reader(open(validatePath))
@@ -249,7 +249,7 @@ def predict(trainPath='btrain.csv', testPath='btrain.csv', outPath='result.csv')
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, 6)
+	learn(root, attributes, 7)
 	print "Decision tree learned!"
 
 	csv_test = csv.reader(open(testPath))

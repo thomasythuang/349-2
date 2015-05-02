@@ -120,7 +120,7 @@ def median(lst):
 	half = (len(lst) - 1) / 2
 	return sum(sorted(lst)[half:half + even]) / float(even)
 
-def learn(node, attrTypes, maxHeight):
+def learn(node, pruning, attrTypes, maxHeight):
 	"""Learn a decision tree"""
 	if node.numeric:
 		splitCount = 2
@@ -142,18 +142,21 @@ def learn(node, attrTypes, maxHeight):
 			else:
 				ind = int(point[node.attrIndex])
 			sets[ind].append(point)
-			if len(sets[ind]) < 5:
-				largeEnough = False
 
 	if node.height < maxHeight:
+		if pruning:
+			threshold = 5
+		else:
+			threshold = 2
+
 		#print node.height
 		for i in range(splitCount):
-			if len(sets[i]) < 3:
+			if len(sets[i]) < threshold:
 				node.branches.append(Node(node.data, node.height+1))
 				return
 			node.branches.append(Node(sets[i], node.height+1))
 		for branch in node.branches:
-			learn(branch, attrTypes, maxHeight)
+			learn(branch, pruning, attrTypes, maxHeight)
 	else:
 		node.branches.append(Node(node.data, node.height+1))
 
@@ -222,7 +225,7 @@ def makeTree(pruning=False, maxHeight=10, trainPath='btrain.csv'):
 		dataPoints.append(convertCSV(row))
 
 	root = Node(dataPoints, 0)
-	learn(root, attributes, maxHeight)
+	learn(root, pruning, attributes, maxHeight)
 	print "Done!"
 	return root
 
@@ -236,7 +239,7 @@ def validate(pruning=False, maxHeight=10, trainPath='btrain.csv', validatePath='
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, maxHeight)
+	learn(root, pruning, attributes, maxHeight)
 	print "Decision tree learned!"
 
 	csv_validate = csv.reader(open(validatePath))
@@ -266,7 +269,7 @@ def predict(pruning=False, maxHeight=10, trainPath='btrain.csv', testPath='btrai
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, maxHeight)
+	learn(root, pruning, attributes, maxHeight)
 	print "Decision tree learned!"
 
 	csv_test = csv.reader(open(testPath))

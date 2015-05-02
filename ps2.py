@@ -22,14 +22,12 @@ class Node:
 		# Calculate the best attribute to split on, and what value to split
 		self.attrIndex, self.split = findSplit(data, self.attrs)
 
+		self.prob = getRatio(self.data, self.attrs-1, 0.0)
+
 		if attributes[self.attrIndex] > 0:
 			self.numeric = False
 		else:
 			self.numeric = True
-
-class Leaf(Node):
-	def setProb(self, prob):
-		self.prob = prob
 
 def findSplit(data, attrs):
 	"""Find the most appropriate attribute to split on"""
@@ -150,22 +148,14 @@ def learn(node, attrTypes, maxHeight):
 	if node.height < maxHeight:
 		#print node.height
 		for i in range(splitCount):
-			if len(sets[i]) < 10:
-				makeLeaf(node)
+			if len(sets[i]) < 3:
+				node.branches.append(Node(node.data, node.height+1))
 				return
 			node.branches.append(Node(sets[i], node.height+1))
 		for branch in node.branches:
 			learn(branch, attrTypes, maxHeight)
 	else:
-		#print "Reached max height", maxHeight
-		#for i in range(splitCount):
-		makeLeaf(node)
-		#node.branches[1].setProb(1.0-p)
-
-def makeLeaf(node):
-	node.branches.append(Leaf(node.data, node.height+1))
-	p = getRatio(node.data, node.attrs-1, 0.0)
-	node.branches[len(node.branches)-1].setProb(p)
+		node.branches.append(Node(node.data, node.height+1))
 
 def printTree(node):
 	if len(node.branches) > 0:
@@ -208,6 +198,9 @@ def followTree(node, example):
 					val = int(example[node.attrIndex]) - 1
 				else:
 					val = int(example[node.attrIndex])
+
+				if val >= len(node.branches):
+					val = len(node.branches)-1
 				return followTree(node.branches[val], example)
 		else:
 			return followTree(node.branches[0], example)
@@ -218,7 +211,7 @@ def followTree(node, example):
 		else:
 			return 0.0
 
-def makeTree(trainPath='btrain.csv', maxHeight=7):
+def makeTree(pruning=False, maxHeight=10, trainPath='btrain.csv'):
 	"""Generates a decision tree based on the training set"""
 
 	csv_train = csv.reader(open(trainPath))
@@ -233,7 +226,7 @@ def makeTree(trainPath='btrain.csv', maxHeight=7):
 	print "Done!"
 	return root
 
-def validate(trainPath='btrain.csv', validatePath='bvalidate.csv'):
+def validate(pruning=False, maxHeight=10, trainPath='btrain.csv', validatePath='bvalidate.csv'):
 	"""Learns a model from the training set and then reports the
 	model's performance using the validation set"""
 	csv_train = csv.reader(open(trainPath))
@@ -243,7 +236,7 @@ def validate(trainPath='btrain.csv', validatePath='bvalidate.csv'):
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, 8)
+	learn(root, attributes, maxHeight)
 	print "Decision tree learned!"
 
 	csv_validate = csv.reader(open(validatePath))
@@ -263,7 +256,7 @@ def validate(trainPath='btrain.csv', validatePath='bvalidate.csv'):
 	print "Incorrect:", incorrect
 	print "Accuracy:", 100*float(correct)/float(correct+incorrect), "%"
 
-def predict(trainPath='btrain.csv', testPath='btrain.csv', outPath='result.csv'):
+def predict(pruning=False, maxHeight=10, trainPath='btrain.csv', testPath='btrain.csv', outPath='result.csv'):
 	"""Generates predictions for a set and writes the predictions 
 	to csv format"""
 	csv_train = csv.reader(open(trainPath))
@@ -273,7 +266,7 @@ def predict(trainPath='btrain.csv', testPath='btrain.csv', outPath='result.csv')
 	for row in csv_train:
 		dataPoints.append(convertCSV(row))
 	root = Node(dataPoints, 0)
-	learn(root, attributes, 7)
+	learn(root, attributes, maxHeight)
 	print "Decision tree learned!"
 
 	csv_test = csv.reader(open(testPath))

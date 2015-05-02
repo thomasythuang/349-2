@@ -1,0 +1,41 @@
+This output can be run in Python by using printDisjuctiveNormalForm(tree) after assigning a decision tree to tree.
+
+To read, DNF rules are separated by commas. Each rule is in the format [Attribute number]split[Decision]:[SplitNum].  If the attribute is numeric, then Decision is 0 for greater than, and 1 for less than or equal to.   If the attribute is nominal, then Decision is a number that represents which group was chosen from 0 to the range of the group.  For example, going from whether to decision number, -1 is 0, 0 is 1, and 1 is 2.
+
+The final number on the right represents to probability of the win according to examples that classify to those rules.  In general, if the probability is 0.5 or greather, then consider it a win.
+
+Last 16 unpruned leaves
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split0:48.00,0split1: 0.38,0split1: 0.28, : 0.88679245283
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split0:44.00,1split0: 0.25, : 0.636363636364
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split0:44.00,1split1: 0.25, : 0.388888888889
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split1:44.00,7split0:, : 0.52
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split1:44.00,7split1:, : 0.705882352941
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split1:44.00,7split2:, : 0.611111111111
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split1:44.00,7split3:, : 0.75
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split0: 0.20,11split1:48.00,12split1:44.00,7split4:, : 0.84
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split0: 0.37,0split0: 0.45,11split0:49.00, : 0.333333333333
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split0: 0.37,0split0: 0.45,11split1:49.00, : 0.148148148148
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split0: 0.37,0split1: 0.45,11split0:50.00, : 0.538461538462
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split0: 0.37,0split1: 0.45,11split1:50.00, : 0.339285714286
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split1: 0.37,0split0: 0.29,11split0:50.00, : 0.537037037037
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split1: 0.37,0split0: 0.29,11split1:50.00, : 0.259259259259
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split1: 0.37,0split1: 0.29,1split0: 0.13, : 0.814814814815
+4split1: 1.00,5split1: 1.00,1split1: 0.52,1split1: 0.37,0split1: 0.52,1split1: 0.28,1split1: 0.20,0split1: 0.37,0split1: 0.29,1split1: 0.13, : 0.622641509434
+
+Last 16 pruned leaves
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split0:48.00, 0split1: 0.38, 0split1: 0.28,  : 0.88679245283
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split0:44.00, 1split0: 0.25,  : 0.636363636364
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split0:44.00, 1split1: 0.25,  : 0.388888888889
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split1:44.00, 7split0:,  : 0.52
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split1:44.00, 7split1:,  : 0.705882352941
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split1:44.00, 7split2:,  : 0.611111111111
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split1:44.00, 7split3:,  : 0.75
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split0: 0.20, 11split1:48.00, 12split1:44.00, 7split4:,  : 0.84
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split0: 0.37, 0split0: 0.45, 11split0:49.00,  : 0.333333333333
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split0: 0.37, 0split0: 0.45, 11split1:49.00,  : 0.148148148148
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split0: 0.37, 0split1: 0.45, 11split0:50.00,  : 0.538461538462
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split0: 0.37, 0split1: 0.45, 11split1:50.00,  : 0.339285714286
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split1: 0.37, 0split0: 0.29, 11split0:50.00,  : 0.537037037037
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split1: 0.37, 0split0: 0.29, 11split1:50.00,  : 0.259259259259
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split1: 0.37, 0split1: 0.29, 1split0: 0.13,  : 0.814814814815
+4split1: 1.00, 5split1: 1.00, 1split1: 0.52, 1split1: 0.37, 0split1: 0.52, 1split1: 0.28, 1split1: 0.20, 0split1: 0.37, 0split1: 0.29, 1split1: 0.13,  : 0.622641509434

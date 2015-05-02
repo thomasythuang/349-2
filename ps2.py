@@ -20,7 +20,7 @@ class Node:
 		self.entropy = getEntropy(self.data, self.attrs-1, 0.0)
 
 		# Calculate the best attribute to split on, and what value to split
-		self.attrIndex, self.split = findSplit(data, self.attrs)
+		self.attrIndex, self.split, self.branchEntropy = findSplit(data, self.attrs)
 
 		self.prob = getRatio(self.data, self.attrs-1, 0.0)
 
@@ -60,7 +60,7 @@ def findSplit(data, attrs):
 	index = entropies.index(min(entropies))
 	med = splits[index]
 
-	return index, med
+	return index, med, min(entropies)
 
 def getEntropy(data, attrIndex, splitNum):
 	"""Calculate the entropy of a node"""
@@ -122,6 +122,12 @@ def median(lst):
 
 def learn(node, pruning, attrTypes, maxHeight):
 	"""Learn a decision tree"""
+
+	#print node.entropy, "-->", node.branchEntropy
+	if math.fabs(node.entropy - node.branchEntropy) < 0.005 and pruning:
+		print "PRUNED"
+		return
+
 	if node.numeric:
 		splitCount = 2
 	else:
@@ -144,21 +150,19 @@ def learn(node, pruning, attrTypes, maxHeight):
 			sets[ind].append(point)
 
 	if node.height < maxHeight:
-		if pruning:
-			threshold = 5
-		else:
-			threshold = 2
+		threshold = 2
 
 		#print node.height
 		for i in range(splitCount):
 			if len(sets[i]) < threshold:
-				node.branches.append(Node(node.data, node.height+1))
+				#node.branches.append(Node(node.data, node.height+1))
 				return
 			node.branches.append(Node(sets[i], node.height+1))
 		for branch in node.branches:
 			learn(branch, pruning, attrTypes, maxHeight)
 	else:
-		node.branches.append(Node(node.data, node.height+1))
+		#node.branches.append(Node(node.data, node.height+1))
+		return
 
 def printTree(node):
 	if len(node.branches) > 0:
